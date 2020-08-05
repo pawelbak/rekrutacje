@@ -16,13 +16,21 @@
         Class.forName("org.gjt.mm.mysql.Driver");
         con = DriverManager.getConnection("jdbc:mysql://localhost/"+db, user, "xxxxxxx");
         out.println (db+ "database successfully opened.");
-        try (Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT name FROM User WHERE username="+request.getParameter("username"))) {
+        if(request.getParameter("action")=="read") {
+            try (Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT email FROM User WHERE username="+request.getParameter("username"))) {
 
-            while (rs.next()) {
-                String name = rs.getString("name");
-                out.println("name: " + name);
+                while (rs.next()) {
+                    String email = rs.getString("email");
+                    out.println("username:"+request.getParameter("username")+" email: " + email);
+                }
             }
+        } else if(request.getParameter("action")=="update") {
+            try {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeUpdate("UPDATE User SET email = "+request.getParameter("email")+" WHERE username="+request.getParameter("username"));
+            }
+            out.println("email updated");
         }
     }
     catch(SQLException e) {
